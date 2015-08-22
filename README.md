@@ -17,6 +17,9 @@ A simple publish-subscribe pattern implementation (in JavaScript).
  myObj.sub( 'onOtherThing', function( value ) { console.log( value ); } );
  myObj.pub( 'onOtherThing', [ 10 ] ); // prints 10
  
+ myObj.sub( 'onAnotherThing', function( a, b ) { console.log( a + b ); } );
+ myObj.pub( 'onAnotherThing', [ 'hello', ' world' ] ); // prints hello world
+ 
  myObj.unsub( 'onSomething', sth );
  myObj.pub( 'onSomething' ); // prints only 'something happened again'
  
@@ -25,6 +28,6 @@ A simple publish-subscribe pattern implementation (in JavaScript).
  
  myObj.sub( 'onSomething', sth );
  myObj.sub( 'onSomething', sth2 );
- myObj.unsub( 'onSomething' ); // remove all subscriptions
+ myObj.unsub( 'onSomething' ); // remove all subscriptions to onSomething
  myObj.pub( 'onSomething' ); // does nothing!
  ```
