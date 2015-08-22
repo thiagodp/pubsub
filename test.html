@@ -1,0 +1,102 @@
+<html>
+<body>
+Tests for PubSub:
+<div id="msg" ></div>
+<script type="text/javascript" src="PubSub.js" ></script>
+<script type="text/javascript" >
+
+function assert( expected, got, message ) {
+	document.getElementById( 'msg' ).innerHTML += ( expected !== got )
+		?	( ' FAILED: expected <i>' + ( ( expected !== undefined ) ? expected : 'undefined' )
+				+ '</i> but got <i>' + ( ( got !== undefined ) ? got : 'undefined' ) + '</i>'
+				+ ( ( message !== undefined ) ? ', with message: <i>' + message + '</i>.' : '.' )
+			)
+		: ' PASSED.';
+}
+
+function test( name, fn ) {
+	document.getElementById( 'msg' ).innerHTML += '<br /><i>' + name + '</i> ==> ';
+	fn();
+}
+
+test( 'registerMethodsCorrectly', function() {
+	var myObj = {};
+	( new PubSub() ).empower( myObj );
+	assert( 'function', typeof myObj.pub );
+	assert( 'function', typeof myObj.sub );
+	assert( 'function', typeof myObj.unsub );
+} );
+
+test( 'subscribedEventBecomeAnEventArray', function() {
+	var myObj = {};
+	( new PubSub() ).empower( myObj );
+	myObj.sub( 'onSomething', function() { console.log( 'sth' ); } );
+	assert( 'object', typeof myObj.onSomething );
+	assert( 1, myObj.onSomething.length );
+} );
+
+test( 'subscribedCallbacksAreCallableDirectly', function() {
+	var myObj = {};
+	( new PubSub() ).empower( myObj );
+	myObj.sub( 'onSomething', function() { console.log( 'sth' ); } );
+	assert( 'function', typeof myObj.onSomething[ 0 ] );
+} );
+
+test( 'eventsAreCalledWhenPublished', function() {
+	var myObj = {};
+	( new PubSub() ).empower( myObj );
+	var count = 0;
+	myObj.sub( 'onSomething', function() { ++count; } );
+	myObj.sub( 'onSomething', function() { ++count; } );
+	myObj.pub( 'onSomething' );
+	assert( 2, count );
+} );
+
+test( 'eventsCanBeCalledWithParameters', function() {
+	var myObj = {};
+	( new PubSub() ).empower( myObj );
+	var count = 0;
+	myObj.sub( 'onSomething', function( val ) { count += val; } );
+	myObj.sub( 'onSomething', function( val ) { count += val; } );
+	myObj.pub( 'onSomething', [ 1 ] );
+	assert( 2, count );
+} );
+
+test( 'eventsCanBeUnsubscribedIndividually', function() {
+	var myObj = {};
+	( new PubSub() ).empower( myObj );
+	var count = 0;
+	var sth1 = function( val ) { count += val; };
+	var sth2 = function( val ) { count += val; };
+	myObj.sub( 'onSomething', sth1 );
+	myObj.sub( 'onSomething', sth2 );
+	myObj.pub( 'onSomething', [ 1 ] );
+	assert( 2, count );
+	count = 0;
+	myObj.unsub( 'onSomething', sth2 );
+	myObj.pub( 'onSomething', [ 1 ] );
+	assert( 1, count );
+	count = 0;
+	myObj.unsub( 'onSomething', sth1 );
+	myObj.pub( 'onSomething', [ 1 ] );
+	assert( 0, count );
+} );
+
+test( 'allCallbacksAreRemovedWhenUnsubscribingAnEventWithoutACallback', function() {
+	var myObj = {};
+	( new PubSub() ).empower( myObj );
+	var count = 0;
+	var sth1 = function( val ) { count += val; };
+	var sth2 = function( val ) { count += val; };
+	myObj.sub( 'onSomething', sth1 );
+	myObj.sub( 'onSomething', sth2 );
+	myObj.pub( 'onSomething', [ 1 ] );
+	assert( 2, count );
+	count = 0;
+	myObj.unsub( 'onSomething' );
+	assert( 0, count );
+} );
+
+</script>
+</body>
+</html>
