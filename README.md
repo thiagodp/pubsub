@@ -1,7 +1,7 @@
 # pubsub
-A simple publish-subscribe pattern implementation (in JavaScript).
+A JavaScript _publish-subscribe_ pattern implementation that adds the pattern methods to *your* object. Just use the `empower` method passing your object as an argument and it will have `pub`, `sub`, and `unsub` methods. Thus you don't need to deal with a global PubSub object, as many libraries do out there. Use it just where you need it! ;)
 
- How to use it:
+ Example on how to use it:
 ```javascript
  var myObj = {}; // your object
  
